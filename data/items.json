@@ -2,45 +2,177 @@
   "settings": {
     "title": "Move Out Sale",
     "intro": "Moving out and selling my furniture. Everything is in good shape and priced to go.",
-    "deadline": "2026-12-20",
+    "deadline": "2026-12-05",
     "currency": "$"
   },
   "items": [
     {
-      "id": "ex1",
-      "name": "Solid Wood Desk",
-      "price": 40,
-      "orig": 129,
-      "condition": "Good",
-      "dims": "47 × 24 × 30 in",
-      "desc": "Two years old. A few light scratches on the top, sturdy and stable.",
+      "id": "sofa",
+      "name": "Beige Linen Loveseat",
+      "price": 20,
+      "condition": "",
+      "dims": "65 \" w",
+      "desc": "Light beige fabric loveseat with a tufted back and wooden legs.",
       "status": "available",
-      "photos": [],
-      "example": true
+      "photos": [
+        "images/sofa.jpg"
+      ]
     },
     {
-      "id": "ex2",
-      "name": "3-Seat Fabric Sofa",
-      "price": 120,
-      "orig": 499,
-      "condition": "Like new",
-      "dims": "78 × 34 × 33 in",
-      "desc": "Light grey, no stains, from a smoke-free and pet-free home.",
+      "id": "queen_bed_frame",
+      "name": "Queen Bed Frame with Headboard",
+      "price": 20,
+      "condition": "",
+      "dims": "",
+      "desc": "Black metal platform frame with wooden slats and a grey fabric headboard. Queen size.",
       "status": "available",
-      "photos": [],
-      "example": true
+      "photos": [
+        "images/queen_bed_frame.jpg"
+      ]
     },
     {
-      "id": "ex3",
-      "name": "Queen Bed Frame",
-      "price": 60,
-      "orig": 220,
-      "condition": "Good",
-      "dims": "Queen",
-      "desc": "Metal frame with slats. Mattress not included.",
-      "status": "sold",
-      "photos": [],
-      "example": true
+      "id": "marble_dining_table",
+      "name": "Marble Dining Table",
+      "price": 15,
+      "condition": "",
+      "dims": "113\" w 72\" d 76\" h",
+      "desc": "White marble-pattern top on a black metal frame.",
+      "status": "available",
+      "photos": [
+        "images/marble_dining_table.jpg"
+      ]
+    },
+    {
+      "id": "desk",
+      "name": "Wood-Top Desk",
+      "price": 20,
+      "condition": "",
+      "dims": "28.98\" H x 47.01\" W x 23.62\" D",
+      "desc": "Wide desk with a wood-grain top and black metal legs. Items on the desk are not included.",
+      "status": "available",
+      "photos": [
+        "images/desk.jpg"
+      ]
+    },
+    {
+      "id": "office_chair",
+      "name": "Office Chair",
+      "price": 8,
+      "condition": "",
+      "dims": "",
+      "desc": "Black mesh back, padded seat, armrests and rolling wheels on a white frame.",
+      "status": "available",
+      "photos": [
+        "images/office_chair.jpg"
+      ]
+    },
+    {
+      "id": "dresser",
+      "name": "White 9-Drawer Dresser",
+      "price": 10,
+      "condition": "",
+      "dims": "39.6\" L x 11.8\" W x 39.5\" H.",
+      "desc": "White frame with nine fabric drawers.",
+      "status": "available",
+      "photos": [
+        "images/dresser.jpg"
+      ]
+    },
+    {
+      "id": "makeup_desk_mirror",
+      "name": "Vanity Desk with Mirror",
+      "price": 10,
+      "condition": "",
+      "dims": "table 24\" W X 16\" D",
+      "desc": "White vanity with a wooden drawer, round mirror and wooden legs.",
+      "status": "available",
+      "photos": [
+        "images/makeup_desk_mirror.jpg"
+      ]
+    },
+    {
+      "id": "side_table",
+      "name": "Nesting Side Tables (Set of 2)",
+      "price": 15,
+      "condition": "",
+      "dims": "",
+      "desc": "Two white tables with wooden legs that tuck together.",
+      "status": "available",
+      "photos": [
+        "images/side_table.jpg"
+      ]
+    },
+    {
+      "id": "floor_lamp",
+      "name": "Floor Lamp with Reading Light",
+      "price": 5,
+      "condition": "",
+      "dims": "",
+      "desc": "Black floor lamp with a main uplight and an adjustable reading arm.",
+      "status": "available",
+      "photos": [
+        "images/floor_lamp.jpg"
+      ]
+    },
+    {
+      "id": "coat_rack",
+      "name": "Coat Rack with Shelves",
+      "price": 10,
+      "condition": "",
+      "dims": "",
+      "desc": "Black metal coat rack with hooks and two small wooden corner shelves.",
+      "status": "available",
+      "photos": [
+        "images/coat_rack.jpg"
+      ]
+    },
+    {
+      "id": "shoe_rack",
+      "name": "4-Tier Shoe Rack",
+      "price": 10,
+      "condition": "",
+      "dims": "",
+      "desc": "Black open shelf with four tiers.",
+      "status": "available",
+      "photos": [
+        "images/shoe_rack.jpg"
+      ]
+    },
+    {
+      "id": "trash_bin",
+      "name": "simplehuman 50L Step Trash Can",
+      "price": 10,
+      "condition": "",
+      "dims": "",
+      "desc": "Grey 50-liter trash can with a foot pedal.",
+      "status": "available",
+      "photos": [
+        "images/trash_bin.jpg"
+      ]
+    },
+    {
+      "id": "cat_tree",
+      "name": "Cat Tree",
+      "price": 15,
+      "condition": "",
+      "dims": "31.5\" H",
+      "desc": "Green and beige cat tree with a hideaway, hammock, top perch and scratching ramp.",
+      "status": "available",
+      "photos": [
+        "images/cat_tree.jpg"
+      ]
+    },
+    {
+      "id": "cat_carrier",
+      "name": "Pet Carrier",
+      "price": 5,
+      "condition": "",
+      "dims": "",
+      "desc": "For small-medium cat",
+      "status": "available",
+      "photos": [
+        "images/cat_carrier.jpg"
+      ]
     }
   ]
 }

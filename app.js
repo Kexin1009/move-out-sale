@@ -13,11 +13,29 @@ var CONFIG = { owner: "", repo: "", branch: "main" };
 })();
 
 var TOKEN_KEY = "mos-gh-token";
-var CONDITIONS = ["New", "Like new", "Good", "Fair", "Needs work"];
+var CONDITIONS = ["", "New", "Like new", "Good", "Fair", "Needs work"];
 var state = null, published = "", ui = { filter: "all", sort: "default" };
 var token = null, canEdit = false, editMode = false, saving = false;
 var imgCache = {}; // path -> data URL, so freshly committed photos show before Pages rebuilds
 var app = document.getElementById("app");
+/* A line-drawn armchair, a potted plant and a moving box, in the page's soft palette */
+var ART = '<svg viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round">' +
+  '<ellipse cx="120" cy="182" rx="108" ry="10" style="fill:var(--leaf-soft)"/>' +
+  '<rect x="150" y="118" width="70" height="58" rx="4" style="fill:var(--blush);stroke:var(--blush-ink)" stroke-width="2"/>' +
+  '<path d="M150 134h70M185 118v16" style="stroke:var(--blush-ink)" stroke-width="2"/>' +
+  '<path d="M30 92c0-16 12-26 28-26h44c16 0 28 10 28 26v24H30z" style="fill:var(--sky);stroke:var(--ink)" stroke-width="2.2"/>' +
+  '<rect x="20" y="104" width="22" height="46" rx="10" style="fill:var(--paper);stroke:var(--ink)" stroke-width="2.2"/>' +
+  '<rect x="118" y="104" width="22" height="46" rx="10" style="fill:var(--paper);stroke:var(--ink)" stroke-width="2.2"/>' +
+  '<rect x="40" y="116" width="80" height="22" rx="8" style="fill:var(--paper);stroke:var(--ink)" stroke-width="2.2"/>' +
+  '<path d="M34 150v24M126 150v24" style="stroke:var(--ink)" stroke-width="2.2"/>' +
+  '<path d="M170 118l-4-22h38l-4 22" style="fill:var(--paper);stroke:var(--ink)" stroke-width="2"/>' +
+  '<path d="M185 96c0-18-4-30-16-40M185 96c2-16 10-28 24-34M185 96c-1-10-1-22 4-32" style="stroke:var(--leaf-ink)" stroke-width="2"/>' +
+  '<ellipse cx="166" cy="54" rx="9" ry="5" transform="rotate(-40 166 54)" style="fill:var(--leaf)"/>' +
+  '<ellipse cx="211" cy="60" rx="10" ry="5" transform="rotate(-20 211 60)" style="fill:var(--leaf)"/>' +
+  '<ellipse cx="190" cy="60" rx="5" ry="10" transform="rotate(12 190 60)" style="fill:var(--leaf)"/>' +
+  '<ellipse cx="176" cy="78" rx="8" ry="4" transform="rotate(30 176 78)" style="fill:var(--leaf)"/>' +
+  '<ellipse cx="199" cy="80" rx="8" ry="4" transform="rotate(-30 199 80)" style="fill:var(--leaf)"/>' +
+  '</svg>';
 
 function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 function lsSet(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} }
@@ -27,6 +45,7 @@ function money(n) { if (n === 0) return "FREE"; if (n == null || n === "") retur
 function src(p) { return imgCache[p] || p; }
 function daysLeft() { var dl = state.settings.deadline; if (!dl) return null; var end = new Date(dl + "T23:59:59"); if (isNaN(end)) return null; return Math.ceil((end - new Date()) / 86400000); }
 function fmtDate(dl) { var p = String(dl || "").split("-"), M = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; return p.length === 3 ? M[+p[1] - 1] + " " + (+p[2]) : dl; }
+function shortDate(dl) { var p = String(dl || "").split("-"); return p.length === 3 ? (+p[1]) + "/" + (+p[2]) : dl; }
 function uid() { return "i" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 function find(id) { for (var i = 0; i < state.items.length; i++) if (state.items[i].id === id) return state.items[i]; }
 function b64utf8(str) { return btoa(unescape(encodeURIComponent(str))); }
@@ -68,28 +87,27 @@ function render() {
   var avail = state.items.filter(function (i) { return i.status !== "sold"; }).length, sold = state.items.length - avail;
   var exN = state.items.filter(function (i) { return i.example; }).length;
   document.title = s.title || "Move Out Sale";
-  var h = '<div class="tape" aria-hidden="true"><span>' + esc("EVERYTHING MUST GO · MOVING OUT · FURNITURE SALE · ".repeat(16)) + "</span></div>";
-  h += '<header class="hero wrap"><div class="hero-top"><div style="min-width:0;flex:1 1 320px"><h1>' + esc(s.title) + "</h1>" + (s.intro ? '<p class="intro">' + esc(s.intro) + "</p>" : "") + "</div>";
-  if (dl != null) h += '<div class="deadline" aria-label="Sale ends ' + esc(fmtDate(s.deadline)) + '">' + (dl > 1 ? "<b>" + dl + "</b><small>days left</small><small>ends " + esc(fmtDate(s.deadline)) + "</small>" : dl === 1 ? "<small>ends</small><b>Tmrw</b>" : dl === 0 ? "<small>last</small><b>Day</b>" : "<small>sale</small><b>Over</b><small>thank you</small>") + "</div>";
-  h += '</div></header><main class="wrap"><div class="toolbar"><div class="chips" role="group" aria-label="Filter">';
+  var h = '<header class="hero"><div class="wrap"><div class="hero-text"><h1>' + esc(s.title) + "</h1>" + (s.intro ? '<p class="intro">' + esc(s.intro) + "</p>" : "");
+  if (dl != null) h += '<div class="pill">' + (dl > 1 ? dl + " days left · until " + esc(shortDate(s.deadline)) : dl === 1 ? "1 day left · until " + esc(shortDate(s.deadline)) : dl === 0 ? "Last day · " + esc(shortDate(s.deadline)) : "Sale ended") + "</div>";
+  h += '</div><div class="art" aria-hidden="true">' + ART + "</div></div></header>";
+  h += '<main class="wrap"><div class="toolbar"><div class="chips" role="group" aria-label="Filter">';
   [["all", "All", state.items.length], ["available", "Available", avail], ["sold", "Sold", sold]].forEach(function (f) { h += '<button class="chip" data-filter="' + f[0] + '" aria-pressed="' + (ui.filter === f[0]) + '">' + f[1] + '<span class="n">' + f[2] + "</span></button>"; });
   h += '</div><div class="tools"><select id="sort" aria-label="Sort"><option value="default"' + (ui.sort === "default" ? " selected" : "") + '>Available first</option><option value="low"' + (ui.sort === "low" ? " selected" : "") + '>Price: low to high</option><option value="high"' + (ui.sort === "high" ? " selected" : "") + ">Price: high to low</option></select></div></div>";
-  h += '<div class="count">' + avail + " available · " + sold + " sold</div>";
   if (canEdit && exN) h += '<div class="notice"><span>' + exN + ' example items are on the page (marked “Example”). Add your own furniture, then remove them.</span><button class="btn danger" data-act="clear-examples">Remove examples</button></div>';
   h += '<div class="grid">';
   if (!items.length) h += '<div class="empty">' + (state.items.length ? "Nothing here yet." : (canEdit ? "No furniture yet. Click “Add item” below to post your first piece." : "Furniture coming soon. Check back shortly.")) + "</div>";
   items.forEach(function (it) {
     h += '<article class="card' + (it.status === "sold" ? " sold" : "") + '" data-id="' + esc(it.id) + '" tabindex="0" aria-label="' + esc(it.name + ", " + (it.status === "sold" ? "sold" : money(it.price))) + '"><div class="photo">';
     h += it.photos && it.photos[0] ? '<img src="' + esc(src(it.photos[0])) + '" alt="' + esc(it.name) + '" loading="lazy">' : '<div class="ph">No photo yet</div>';
-    h += it.status === "sold" ? '<div class="stamp">SOLD</div>' : '<div class="price' + (it.price === 0 ? " free" : "") + '">' + esc(money(it.price)) + "</div>";
-    h += '</div><div class="body"><div class="name">' + esc(it.name) + '</div><div class="meta">' + (it.example ? '<span class="tag ex">Example</span>' : "") + (it.condition ? '<span class="tag">' + esc(it.condition) + "</span>" : "") + (it.dims ? "<span>" + esc(it.dims) + "</span>" : "") + (it.orig ? '<span>Retail <span class="orig">' + esc(money(it.orig)) + "</span></span>" : "") + "</div>";
+    if (it.status === "sold") h += '<div class="stamp">Sold</div>';
+    h += '</div><div class="body"><div class="title-row"><div class="name">' + esc(it.name) + '</div>' + (it.price == null ? "" : '<div class="price' + (it.price === 0 ? " free" : "") + '">' + esc(it.price === 0 ? "free" : money(it.price)) + "</div>") + '</div><div class="meta">' + (it.example ? '<span class="tag ex">Example</span>' : "") + (it.condition ? '<span class="tag">' + esc(it.condition) + "</span>" : "") + (it.dims ? "<span>" + esc(it.dims) + "</span>" : "") + "</div>";
     if (canEdit && editMode) {
       h += '<div class="edit-row"><span class="cur">' + esc(s.currency || "$") + '</span><input type="number" min="0" step="1" inputmode="decimal" id="p-' + esc(it.id) + '" data-price="' + esc(it.id) + '" value="' + esc(it.price) + '" aria-label="Price for ' + esc(it.name) + '"><button data-act="edit">Edit</button></div>';
       h += '<div class="edit-row2"><button data-act="status" data-k="available" class="' + (it.status !== "sold" ? "on" : "") + '">Available</button><button data-act="status" data-k="sold" class="' + (it.status === "sold" ? "on" : "") + '">Sold</button></div>';
     }
     h += "</div></article>";
   });
-  h += '</div></main><footer class="wrap">' + esc(s.title) + ' · <button class="link" data-act="' + (canEdit ? "logout" : "login") + '">' + (canEdit ? "Seller log out" : "Seller login") + "</button></footer>";
+  h += '</div></main><footer class="wrap"><button class="link" data-act="' + (canEdit ? "logout" : "login") + '">' + (canEdit ? "Seller log out" : "Seller login") + "</button></footer>";
   if (canEdit) {
     var dirty = isDirty();
     h += '<div class="adminbar"><div class="in"><div class="grp"><button data-act="toggle-edit" aria-pressed="' + editMode + '">' + (editMode ? "Done editing" : "Edit prices & status") + '</button><button data-act="add">+ Add item</button><button data-act="settings">Page settings</button></div><div class="grp"><span class="st">' + (saving ? "Publishing…" : dirty ? "Unpublished changes" : "All changes published") + '</span><button class="pub" data-act="publish"' + (dirty && !saving ? "" : " disabled") + ">Publish changes</button></div></div></div>";
@@ -127,9 +145,9 @@ function openDetail(id, idx) {
   var h = '<div class="detail"><div class="gallery"><div class="main">' + (ph[idx] ? '<img src="' + esc(src(ph[idx])) + '" alt="' + esc(it.name) + '">' : '<div class="ph">No photo yet</div>') + "</div>";
   if (ph.length > 1) h += '<div class="thumbs">' + ph.map(function (p, i) { return '<button data-act="thumb" data-id="' + esc(it.id) + '" data-i="' + i + '" aria-current="' + (i === idx) + '" aria-label="Photo ' + (i + 1) + '"><img src="' + esc(src(p)) + '" alt=""></button>'; }).join("") + "</div>";
   h += '</div><div class="info"><h2>' + esc(it.name) + "</h2>";
-  h += '<div class="big-price">' + (it.status === "sold" ? '<span style="color:var(--sold)">Sold</span>' : esc(money(it.price))) + (it.orig ? '<span class="orig">Retail ' + esc(money(it.orig)) + "</span>" : "") + "</div>";
+  h += '<div class="big-price">' + (it.status === "sold" ? '<span class="now gone">sold</span>' : (it.price == null ? "" : '<span class="now">' + esc(it.price === 0 ? "free" : money(it.price)) + "</span>")) + "</div>";
   if (it.example) h += '<div class="meta"><span class="tag ex">Example</span></div>';
-  h += '<div class="status-line ' + (it.status === "sold" ? "sold" : "available") + '">● ' + (it.status === "sold" ? "Sold" : "Available") + "</div>";
+  h += '<div class="status-line ' + (it.status === "sold" ? "sold" : "available") + '">' + (it.status === "sold" ? "Sold" : "Available") + "</div>";
   h += '<dl class="specs">' + (it.condition ? "<dt>Condition</dt><dd>" + esc(it.condition) + "</dd>" : "") + (it.dims ? "<dt>Size</dt><dd>" + esc(it.dims) + "</dd>" : "") + "</dl>";
   if (it.desc) h += '<p class="desc">' + esc(it.desc) + "</p>";
   if (canEdit) h += '<button class="btn alt" data-act="edit" data-id="' + esc(it.id) + '">Edit this item</button>';
@@ -139,14 +157,14 @@ function openDetail(id, idx) {
 
 /* ---------------- Item editor ---------------- */
 var draft = null;
-function openEditor(id) { var it = id ? find(id) : null; draft = it ? JSON.parse(JSON.stringify(it)) : { id: uid(), name: "", price: "", orig: null, condition: "Good", dims: "", desc: "", status: "available", photos: [] }; draft._new = !it; renderEditor(); }
+function openEditor(id) { var it = id ? find(id) : null; draft = it ? JSON.parse(JSON.stringify(it)) : { id: uid(), name: "", price: "", condition: "Good", dims: "", desc: "", status: "available", photos: [] }; draft._new = !it; renderEditor(); }
 function renderEditor() {
   var d = draft;
   var h = '<form class="form" id="item-form" novalidate><h2>' + (d._new ? "Add item" : "Edit item") + "</h2>";
   h += '<div class="field"><span class="lbl">Photos (first one is the cover, up to 6)</span><div class="pics">' + d.photos.map(function (p, i) { return '<div class="pic"><img src="' + esc(src(p)) + '" alt="Photo ' + (i + 1) + '"><button type="button" class="rm" data-act="rm-pic" data-i="' + i + '" aria-label="Remove photo">×</button>' + (i === 0 ? '<span class="cv" style="text-align:center">Cover</span>' : '<button type="button" class="cv" data-act="cover-pic" data-i="' + i + '">Make cover</button>') + "</div>"; }).join("") + (d.photos.length < 6 ? '<label class="addpic">+ Add photos<input type="file" id="f-photos" accept="image/*" multiple></label>' : "") + "</div></div>";
   h += '<div class="field"><label for="f-name">Name</label><input id="f-name" maxlength="80" value="' + esc(d.name) + '" placeholder="e.g. IKEA bookshelf"></div>';
-  h += '<div class="row2"><div class="field"><label for="f-price">Price (0 = free)</label><input id="f-price" type="number" min="0" step="1" inputmode="decimal" value="' + esc(d.price) + '"></div><div class="field"><label for="f-orig">Retail price (optional)</label><input id="f-orig" type="number" min="0" step="1" inputmode="decimal" value="' + esc(d.orig == null ? "" : d.orig) + '"></div></div>';
-  h += '<div class="row2"><div class="field"><label for="f-cond">Condition</label><select id="f-cond">' + CONDITIONS.map(function (c) { return "<option" + (d.condition === c ? " selected" : "") + ">" + c + "</option>"; }).join("") + '</select></div><div class="field"><label for="f-dims">Size (optional)</label><input id="f-dims" maxlength="60" value="' + esc(d.dims) + '" placeholder="W × D × H"></div><div class="field"><label for="f-status">Status</label><select id="f-status"><option value="available"' + (d.status !== "sold" ? " selected" : "") + '>Available</option><option value="sold"' + (d.status === "sold" ? " selected" : "") + ">Sold</option></select></div></div>";
+  h += '<div class="field"><label for="f-price">Price (0 = free)</label><input id="f-price" type="number" min="0" step="1" inputmode="decimal" value="' + esc(d.price) + '"></div>';
+  h += '<div class="row2"><div class="field"><label for="f-cond">Condition</label><select id="f-cond">' + CONDITIONS.map(function (c) { return '<option value="' + c + '"' + ((d.condition || "") === c ? " selected" : "") + ">" + (c || "Not specified") + "</option>"; }).join("") + '</select></div><div class="field"><label for="f-dims">Size (optional)</label><input id="f-dims" maxlength="60" value="' + esc(d.dims) + '" placeholder="W × D × H"></div><div class="field"><label for="f-status">Status</label><select id="f-status"><option value="available"' + (d.status !== "sold" ? " selected" : "") + '>Available</option><option value="sold"' + (d.status === "sold" ? " selected" : "") + ">Sold</option></select></div></div>";
   h += '<div class="field"><label for="f-desc">Description (optional)</label><textarea id="f-desc" maxlength="1000" placeholder="Age, wear, anything a buyer should know">' + esc(d.desc) + "</textarea></div>";
   h += '<p class="err" id="f-err" role="alert"></p><div class="form-actions">' + (d._new ? "" : '<button type="button" class="btn danger" data-act="delete-item">Delete</button>') + '<div class="right"><button type="button" class="btn alt" data-act="close">Cancel</button><button type="submit" class="btn">' + (d._new ? "Add" : "Save") + "</button></div></div></form>";
   openModal(h);
@@ -156,7 +174,7 @@ function renderEditor() {
   var fp = document.getElementById("f-photos"); if (fp) fp.addEventListener("change", function () { addPhotos(fp.files); });
   if (d._new) document.getElementById("f-name").focus();
 }
-function syncDraft() { if (!draft) return; var g = function (id) { var el = document.getElementById(id); return el ? el.value : ""; }; draft.name = g("f-name"); draft.price = g("f-price"); draft.orig = g("f-orig"); draft.condition = g("f-cond"); draft.dims = g("f-dims"); draft.status = g("f-status"); draft.desc = g("f-desc"); }
+function syncDraft() { if (!draft) return; var g = function (id) { var el = document.getElementById(id); return el ? el.value : ""; }; draft.name = g("f-name"); draft.price = g("f-price"); draft.condition = g("f-cond"); draft.dims = g("f-dims"); draft.status = g("f-status"); draft.desc = g("f-desc"); }
 function resize(file) {
   return new Promise(function (res, rej) {
     var url = URL.createObjectURL(file), img = new Image();
@@ -173,7 +191,7 @@ function saveDraft() {
   syncDraft(); var err = document.getElementById("f-err");
   if (!draft.name.trim()) { err.textContent = "Add a name for this item."; document.getElementById("f-name").focus(); return; }
   if (draft.price === "" || isNaN(+draft.price) || +draft.price < 0) { err.textContent = "Add a price. Use 0 for free."; document.getElementById("f-price").focus(); return; }
-  var it = { id: draft.id, name: draft.name.trim(), price: +draft.price, orig: draft.orig === "" || draft.orig == null ? null : +draft.orig, condition: draft.condition, dims: draft.dims.trim(), desc: draft.desc.trim(), status: draft.status, photos: draft.photos };
+  var it = { id: draft.id, name: draft.name.trim(), price: +draft.price, condition: draft.condition, dims: draft.dims.trim(), desc: draft.desc.trim(), status: draft.status, photos: draft.photos };
   var i = state.items.findIndex(function (x) { return x.id === it.id; });
   if (i < 0) state.items.unshift(it); else state.items[i] = it;
   closeModal(); draft = null; render();
