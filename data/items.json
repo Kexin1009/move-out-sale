@@ -1,0 +1,46 @@
+{
+  "settings": {
+    "title": "Move Out Sale",
+    "intro": "Moving out and selling my furniture. Everything is in good shape and priced to go.",
+    "deadline": "2026-12-20",
+    "currency": "$"
+  },
+  "items": [
+    {
+      "id": "ex1",
+      "name": "Solid Wood Desk",
+      "price": 40,
+      "orig": 129,
+      "condition": "Good",
+      "dims": "47 × 24 × 30 in",
+      "desc": "Two years old. A few light scratches on the top, sturdy and stable.",
+      "status": "available",
+      "photos": [],
+      "example": true
+    },
+    {
+      "id": "ex2",
+      "name": "3-Seat Fabric Sofa",
+      "price": 120,
+      "orig": 499,
+      "condition": "Like new",
+      "dims": "78 × 34 × 33 in",
+      "desc": "Light grey, no stains, from a smoke-free and pet-free home.",
+      "status": "available",
+      "photos": [],
+      "example": true
+    },
+    {
+      "id": "ex3",
+      "name": "Queen Bed Frame",
+      "price": 60,
+      "orig": 220,
+      "condition": "Good",
+      "dims": "Queen",
+      "desc": "Metal frame with slats. Mattress not included.",
+      "status": "sold",
+      "photos": [],
+      "example": true
+    }
+  ]
+}
