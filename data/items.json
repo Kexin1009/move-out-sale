@@ -57,7 +57,7 @@
     {
       "id": "office_chair",
       "name": "Office Chair",
-      "price": 8,
+      "price": 10,
       "condition": "",
       "dims": "",
       "desc": "Black mesh back, padded seat, armrests and rolling wheels on a white frame.",
@@ -93,7 +93,7 @@
     {
       "id": "side_table",
       "name": "Nesting Side Tables (Set of 2)",
-      "price": 8,
+      "price": 10,
       "condition": "",
       "dims": "",
       "desc": "Two white tables with wooden legs that tuck together.",
@@ -153,7 +153,7 @@
     {
       "id": "cat_tree",
       "name": "Cat Tree",
-      "price": 8,
+      "price": 10,
       "condition": "",
       "dims": "31.5\" H",
       "desc": "Green and beige cat tree with a hideaway, hammock, top perch and scratching ramp.",
