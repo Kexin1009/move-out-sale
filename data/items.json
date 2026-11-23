@@ -93,7 +93,7 @@
     {
       "id": "side_table",
       "name": "Nesting Side Tables (Set of 2)",
-      "price": 15,
+      "price": 8,
       "condition": "",
       "dims": "",
       "desc": "Two white tables with wooden legs that tuck together.",
@@ -117,7 +117,7 @@
     {
       "id": "coat_rack",
       "name": "Coat Rack with Shelves",
-      "price": 10,
+      "price": 8,
       "condition": "",
       "dims": "",
       "desc": "Black metal coat rack with hooks and two small wooden corner shelves.",
@@ -129,7 +129,7 @@
     {
       "id": "shoe_rack",
       "name": "4-Tier Shoe Rack",
-      "price": 10,
+      "price": 8,
       "condition": "",
       "dims": "",
       "desc": "Black open shelf with four tiers.",
@@ -141,7 +141,7 @@
     {
       "id": "trash_bin",
       "name": "simplehuman 50L Step Trash Can",
-      "price": 10,
+      "price": 8,
       "condition": "",
       "dims": "",
       "desc": "Grey 50-liter trash can with a foot pedal.",
@@ -153,7 +153,7 @@
     {
       "id": "cat_tree",
       "name": "Cat Tree",
-      "price": 15,
+      "price": 8,
       "condition": "",
       "dims": "31.5\" H",
       "desc": "Green and beige cat tree with a hideaway, hammock, top perch and scratching ramp.",
